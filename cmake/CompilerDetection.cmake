@@ -1,5 +1,12 @@
 function(detect_compiler)
-    if(CMAKE_C_COMPILER_ID MATCHES "Watcom")
+    if(EMSCRIPTEN)
+        message(STATUS "Detected Emscripten compiler")
+        set(EMSCRIPTEN TRUE PARENT_SCOPE)
+
+        # Emscripten-specific flags
+        add_compile_options(-Wall -Wextra)
+
+    elseif(CMAKE_C_COMPILER_ID MATCHES "Watcom")
         message(STATUS "Detected OpenWatcom compiler")
         set(WATCOM TRUE PARENT_SCOPE)
 

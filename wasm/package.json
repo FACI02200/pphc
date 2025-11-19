@@ -1,0 +1,48 @@
+{
+  "name": "@openpajak/pphc-wasm",
+  "version": "0.1.0",
+  "description": "Indonesian Tax Calculator - WebAssembly bindings",
+  "type": "module",
+  "main": "pph-wrapper.js",
+  "types": "pph-wrapper.d.ts",
+  "exports": {
+    ".": {
+      "types": "./pph-wrapper.d.ts",
+      "import": "./pph-wrapper.js",
+      "require": "./pph-wrapper.js"
+    }
+  },
+  "files": [
+    "pph-wrapper.js",
+    "pph-wrapper.d.ts",
+    "README.md"
+  ],
+  "keywords": [
+    "indonesia",
+    "tax",
+    "calculator",
+    "pph",
+    "ppn",
+    "wasm",
+    "webassembly"
+  ],
+  "author": "OpenPajak Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openpajak/pphc.git",
+    "directory": "wasm"
+  },
+  "bugs": {
+    "url": "https://github.com/openpajak/pphc/issues"
+  },
+  "homepage": "https://github.com/openpajak/pphc#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "build": "cd .. && ./build-wasm.sh Release",
+    "build:debug": "cd .. && ./build-wasm.sh Debug",
+    "clean": "rm -rf ../build-wasm"
+  }
+}

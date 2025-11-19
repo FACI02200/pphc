@@ -96,6 +96,35 @@ if(BUILD_SHARED_LIBS)
     )
 endif()
 
+# WebAssembly library (Emscripten)
+if(EMSCRIPTEN)
+    add_executable(pph_wasm ${LIBPPH_SOURCES})
+
+    set_target_properties(pph_wasm PROPERTIES
+        OUTPUT_NAME "pph"
+        SUFFIX ".js"
+    )
+
+    # Include directories
+    target_include_directories(pph_wasm
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:include>
+    )
+
+    # Install WASM output
+    install(TARGETS pph_wasm
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+
+    # Also install the .wasm file
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/pph.wasm
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        OPTIONAL
+    )
+endif()
+
 # Static library
 if(BUILD_STATIC_LIBS)
     add_library(pph_static STATIC ${LIBPPH_SOURCES})

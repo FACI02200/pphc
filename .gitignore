@@ -1,5 +1,6 @@
 # Build directories
 build/
+build-wasm/
 out/
 cmake-build-*/
 
@@ -75,3 +76,12 @@ vgcore.*
 # Dependency files
 *.d
 *.dep
+
+# WebAssembly / Emscripten
+*.wasm
+*.wast
+*.wat
+*.mem
+*.data
+*.js.mem
+node_modules/

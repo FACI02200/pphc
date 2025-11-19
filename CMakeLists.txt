@@ -16,16 +16,23 @@ option(BUILD_TESTS "Build test suite" ON)
 option(BUILD_EXAMPLES "Build example programs" ON)
 option(BUILD_CLI "Build command-line tool" ON)
 
+# Emscripten configuration (must be before other includes)
+if(EMSCRIPTEN)
+    include(cmake/EmscriptenConfig.cmake)
+endif()
+
 # Include CMake modules
 include(cmake/CompilerDetection.cmake)
 include(cmake/PlatformConfig.cmake)
-if(APPLE)
+if(APPLE AND NOT EMSCRIPTEN)
     include(cmake/AppleFramework.cmake)
 endif()
 
 # Compiler detection and configuration
 detect_compiler()
-configure_platform()
+if(NOT EMSCRIPTEN)
+    configure_platform()
+endif()
 
 # Add subdirectories
 add_subdirectory(libpph)

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPHC WebAssembly Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #ecf0f1;
+            border-radius: 4px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+        .result-label {
+            font-weight: 600;
+            color: #7f8c8d;
+        }
+        .result-value {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+        .error {
+            color: #e74c3c;
+            padding: 10px;
+            background: #fadbd8;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .info {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧮 PPHC WebAssembly Demo</h1>
+        <p class="subtitle">Indonesian Tax Calculator running in your browser</p>
+
+        <div id="loading" class="loading">
+            Loading WebAssembly module...
+        </div>
+
+        <div id="app" style="display: none;">
+            <div class="info">
+                <strong>Library Version:</strong> <span id="version">-</span>
+            </div>
+
+            <h2>Money Parser Test</h2>
+            <div class="input-group">
+                <label for="inputAmount">Enter amount (Indonesian format):</label>
+                <input
+                    type="text"
+                    id="inputAmount"
+                    placeholder="250.000.000,50"
+                    value="250.000.000,00">
+            </div>
+
+            <button id="parseButton">Parse & Format</button>
+
+            <div id="parseResult" class="result">
+                <h3>Result</h3>
+                <div class="result-item">
+                    <div class="result-label">Input:</div>
+                    <div class="result-value" id="inputValue">-</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Parsed (internal):</div>
+                    <div class="result-value" id="parsedValue">-</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Formatted:</div>
+                    <div class="result-value" id="formattedValue">-</div>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 40px;">Money Arithmetic</h2>
+            <div class="input-group">
+                <label for="amount1">Amount 1 (IDR):</label>
+                <input type="text" id="amount1" placeholder="100.000.000" value="100.000.000">
+            </div>
+            <div class="input-group">
+                <label for="amount2">Amount 2 (IDR):</label>
+                <input type="text" id="amount2" placeholder="50.000.000" value="50.000.000">
+            </div>
+
+            <button id="addButton">Add</button>
+            <button id="subButton">Subtract</button>
+
+            <div id="mathResult" class="result">
+                <h3>Calculation Result</h3>
+                <div class="result-item">
+                    <div class="result-label">Operation:</div>
+                    <div class="result-value" id="operation">-</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Result:</div>
+                    <div class="result-value" id="mathResultValue">-</div>
+                </div>
+            </div>
+
+            <div id="error" class="error" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        let pphModule;
+
+        // Initialize module
+        async function init() {
+            try {
+                // Load the WASM module
+                // Adjust path to where your pph.js is located
+                const createModule = await import('../build-wasm/libpph/pph.js');
+                pphModule = await createModule.default();
+
+                // Initialize library
+                pphModule._pph_init();
+
+                // Get version
+                const versionPtr = pphModule._pph_get_version();
+                const version = pphModule.UTF8ToString(versionPtr);
+                document.getElementById('version').textContent = version;
+
+                // Show app, hide loading
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+
+                setupEventHandlers();
+            } catch (err) {
+                document.getElementById('loading').innerHTML =
+                    `<div class="error">Failed to load WASM module: ${err.message}<br><br>` +
+                    `Make sure you've built the WASM module first with ./build-wasm.sh</div>`;
+            }
+        }
+
+        function setupEventHandlers() {
+            document.getElementById('parseButton').addEventListener('click', handleParse);
+            document.getElementById('addButton').addEventListener('click', () => handleMath('add'));
+            document.getElementById('subButton').addEventListener('click', () => handleMath('sub'));
+        }
+
+        function handleParse() {
+            const input = document.getElementById('inputAmount').value;
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'none';
+
+            try {
+                // Allocate string in WASM memory
+                const strPtr = allocateString(input);
+
+                // Parse Indonesian format
+                const parsed = pphModule._pph_money_from_string_id(strPtr);
+                pphModule._free(strPtr);
+
+                // Format back
+                const formatted = formatMoney(parsed);
+
+                // Display results
+                document.getElementById('inputValue').textContent = input;
+                document.getElementById('parsedValue').textContent = parsed.toString();
+                document.getElementById('formattedValue').textContent = formatted + ' IDR';
+                document.getElementById('parseResult').classList.add('show');
+            } catch (err) {
+                errorDiv.textContent = 'Error: ' + err.message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function handleMath(operation) {
+            const amount1Str = document.getElementById('amount1').value;
+            const amount2Str = document.getElementById('amount2').value;
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'none';
+
+            try {
+                // Parse both amounts
+                const ptr1 = allocateString(amount1Str);
+                const ptr2 = allocateString(amount2Str);
+
+                const money1 = pphModule._pph_money_from_string_id(ptr1);
+                const money2 = pphModule._pph_money_from_string_id(ptr2);
+
+                pphModule._free(ptr1);
+                pphModule._free(ptr2);
+
+                // Create money structs
+                const m1 = createMoneyStruct(money1);
+                const m2 = createMoneyStruct(money2);
+
+                // Perform operation
+                let result;
+                if (operation === 'add') {
+                    result = pphModule._pph_money_add(m1, m2);
+                } else {
+                    result = pphModule._pph_money_sub(m1, m2);
+                }
+
+                pphModule._free(m1);
+                pphModule._free(m2);
+
+                // Get result value (it's a struct, get the value field)
+                const resultValue = pphModule.getValue(result, 'i64');
+
+                // Format result
+                const formatted = formatMoney(resultValue);
+
+                // Display
+                const opText = operation === 'add' ?
+                    `${formatMoney(money1)} + ${formatMoney(money2)}` :
+                    `${formatMoney(money1)} - ${formatMoney(money2)}`;
+
+                document.getElementById('operation').textContent = opText;
+                document.getElementById('mathResultValue').textContent = formatted + ' IDR';
+                document.getElementById('mathResult').classList.add('show');
+            } catch (err) {
+                errorDiv.textContent = 'Error: ' + err.message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function allocateString(str) {
+            const length = pphModule.lengthBytesUTF8(str) + 1;
+            const ptr = pphModule._malloc(length);
+            pphModule.stringToUTF8(str, ptr, length);
+            return ptr;
+        }
+
+        function createMoneyStruct(value) {
+            const ptr = pphModule._malloc(8); // sizeof(pph_money_t) = 8 bytes
+            pphModule.setValue(ptr, value, 'i64');
+            return ptr;
+        }
+
+        function formatMoney(value) {
+            const buffer = pphModule._malloc(64);
+            const moneyPtr = createMoneyStruct(value);
+
+            pphModule._pph_money_to_string_formatted(moneyPtr, buffer, 64);
+            const result = pphModule.UTF8ToString(buffer);
+
+            pphModule._free(buffer);
+            pphModule._free(moneyPtr);
+
+            return result;
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

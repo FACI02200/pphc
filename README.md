@@ -11,10 +11,11 @@ A portable C library for calculating Indonesian taxes (PPh 21/22/23/26, PPh Fina
 - **Fixed-point arithmetic**: 4 decimal places (10,000 scale factor) for accurate financial calculations
 - **Calculation transparency**: Full breakdown of every calculation step with month-by-month TER withholding
 - **Multi-bonus support**: Flexible bonus system (THR, performance bonuses, etc.) with accurate TER calculation per month
-- **Extreme portability**: Runs on DOS (OpenWatcom), Windows (MSVC/MinGW), Linux, macOS, and iOS
+- **Extreme portability**: Runs on DOS (OpenWatcom), Windows (MSVC/MinGW), Linux, macOS, iOS, and WebAssembly
 - **Zero dependencies**: Pure ANSI C with no external libraries
 - **Thread-safe**: No global state
 - **Framework support**: macOS/iOS frameworks with XCFramework support
+- **WebAssembly**: Run in web browsers with JavaScript/TypeScript bindings
 
 ## Quick Start
 
@@ -64,6 +65,35 @@ int main(void) {
 pphc pph21
 ```
 
+### WebAssembly / Browser
+
+```bash
+# Build for WebAssembly
+./build-wasm.sh Release
+
+# Or manually with emscripten
+emcmake cmake -B build-wasm -DCMAKE_BUILD_TYPE=Release
+emmake make -C build-wasm
+```
+
+JavaScript usage:
+```javascript
+import { createPPH } from './wasm/pph-wrapper.js';
+
+const pph = await createPPH('./build-wasm/libpph/pph.js');
+console.log('Version:', pph.getVersion());
+
+// Parse Indonesian format
+const salary = pph.parseMoneyID('250.000.000');
+console.log('Formatted:', pph.formatMoney(salary));
+
+// Calculate
+const bonus = pph.createMoney(100000000);
+const total = pph.moneyAdd(salary, bonus);
+```
+
+See [wasm/README.md](wasm/README.md) for detailed WASM documentation.
+
 ## Platform Support
 
 | Platform | Compiler | Status |
@@ -75,6 +105,7 @@ pphc pph21
 | Windows | OpenWatcom 1.9+ | ✅ Tested |
 | Windows | MinGW | ✅ Tested |
 | DOS | OpenWatcom 1.9 | ✅ 16/32-bit |
+| WebAssembly | Emscripten | ✅ Browser/Node.js |
 
 ## Build Outputs
 
@@ -84,6 +115,7 @@ pphc pph21
 - **Windows (MSVC)**: `pph.dll` (v0.1a), `pph.lib`, `pph_static.lib`, `pphc.exe`
 - **Windows (OpenWatcom)**: `pph.dll` (v0.1a), `pph.lib`, `pph_s.lib`, `pphc.exe`
 - **Windows (MinGW)**: `libpph.dll`, `libpph.dll.a`, `libpph.a`, `pphc.exe`
+- **WebAssembly**: `pph.js`, `pph.wasm`
 
 ## Documentation
 
