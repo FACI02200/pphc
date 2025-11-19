@@ -176,9 +176,9 @@ char* pph_money_to_string(pph_money_t money, char *buffer, pph_size_t size) {
     }
 
     #if defined(__WATCOMC__) || defined(_MSC_VER)
-        sprintf(buffer, "%I64d.%04I64d", whole, frac);
+        snprintf(buffer, size, "%I64d.%04I64d", whole, frac);
     #else
-        sprintf(buffer, "%lld.%04lld", (long long)whole, (long long)frac);
+        snprintf(buffer, size, "%lld.%04lld", (long long)whole, (long long)frac);
     #endif
 
     return buffer;
@@ -208,9 +208,9 @@ char* pph_money_to_string_formatted(pph_money_t money, char *buffer, pph_size_t 
 
     /* Format whole part with thousands separator */
     #if defined(__WATCOMC__) || defined(_MSC_VER)
-        sprintf(temp, "%I64d", whole);
+        snprintf(temp, sizeof(temp), "%I64d", whole);
     #else
-        sprintf(temp, "%lld", (long long)whole);
+        snprintf(temp, sizeof(temp), "%lld", (long long)whole);
     #endif
 
     len = (int)strlen(temp);
@@ -247,9 +247,9 @@ char* pph_money_to_string_formatted(pph_money_t money, char *buffer, pph_size_t 
 
     /* Add decimal part */
     #if defined(__WATCOMC__) || defined(_MSC_VER)
-        sprintf(q, ".%04I64d", frac);
+        snprintf(q, size - (pph_size_t)(q - buffer), ".%04I64d", frac);
     #else
-        sprintf(q, ".%04lld", (long long)frac);
+        snprintf(q, size - (pph_size_t)(q - buffer), ".%04lld", (long long)frac);
     #endif
 
     return buffer;

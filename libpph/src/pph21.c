@@ -149,7 +149,7 @@ static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
                         }
                     }
 
-                    sprintf(note, "Bulan %d (%s)", i + 1, bonus_names);
+                    snprintf(note, sizeof(note), "Bulan %d (%s)", i + 1, bonus_names);
                     pph_result_add_currency(result, note, monthly_income[i], NULL);
                     pph_result_add_percent(result, "  Tarif TER", ter_rate, NULL);
                     pph_result_add_currency(result, "  PPh 21 TER", monthly_ter[i], NULL);
@@ -163,9 +163,11 @@ static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
             /* Show regular months summary */
             if (regular_count > 0) {
                 pph_money_t ter_rate = pph_get_ter_bulanan_rate(input->ter_category, input->bruto_monthly);
-                sprintf(note, "%d bulan reguler", regular_count);
+                pph_money_t monthly_ter = pph_money_mul(input->bruto_monthly, ter_rate);
+                snprintf(note, sizeof(note), "%d bulan reguler", regular_count);
                 pph_result_add_currency(result, note, input->bruto_monthly, "per bulan");
                 pph_result_add_percent(result, "  Tarif TER", ter_rate, NULL);
+                pph_result_add_currency(result, "  PPh 21 TER per bulan", monthly_ter, NULL);
                 pph_result_add_currency(result, "  Total PPh 21 TER", regular_total, NULL);
             }
         }
@@ -194,7 +196,7 @@ static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
 
         pph_result_add_section(result, "Penghasilan Bruto");
         pph_result_add_currency(result, "Gaji per bulan", input->bruto_monthly, NULL);
-        sprintf(note, "%d bulan", months);
+        snprintf(note, sizeof(note), "%d bulan", months);
         pph_result_add_currency(result, "Gaji setahun", pph_money_mul_int(input->bruto_monthly, months), note);
         if (input->bonuses != NULL && input->bonus_count > 0) {
             int i;
