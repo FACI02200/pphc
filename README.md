@@ -1,0 +1,115 @@
+# PPHC - Indonesian Tax Calculator Library
+
+[![Version](https://img.shields.io/badge/version-0.1a-blue.svg)](https://github.com/openpajak/pphc)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+A portable C library for calculating Indonesian taxes (PPh 21/22/23/26, PPh Final Pasal 4(2), PPN, PPnBM) with complete calculation transparency.
+
+## Features
+
+- **Multi-tax support**: PPh 21/26, PPh 22, PPh 23, PPh Final Pasal 4(2), PPN, PPnBM
+- **Fixed-point arithmetic**: 4 decimal places (10,000 scale factor) for accurate financial calculations
+- **Calculation transparency**: Full breakdown of every calculation step with month-by-month TER withholding
+- **Multi-bonus support**: Flexible bonus system (THR, performance bonuses, etc.) with accurate TER calculation per month
+- **Extreme portability**: Runs on DOS (OpenWatcom), Windows (MSVC/MinGW), Linux, macOS, and iOS
+- **Zero dependencies**: Pure ANSI C with no external libraries
+- **Thread-safe**: No global state
+- **Framework support**: macOS/iOS frameworks with XCFramework support
+
+## Quick Start
+
+### Building (Unix/Linux/macOS)
+
+```bash
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make
+sudo make install
+```
+
+### Using the Library
+
+```c
+#include <pph/pph_calculator.h>
+
+int main(void) {
+    pph21_input_t input = {0};
+    pph_result_t *result;
+
+    pph_init();
+
+    /* Configure calculation */
+    input.subject_type = PPH21_PEGAWAI_TETAP;
+    input.bruto_monthly = PPH_RUPIAH(10000000);    /* 10 million IDR/month */
+    input.months_paid = 12;
+    input.ptkp_status = PPH_PTKP_TK0;
+    input.scheme = PPH21_SCHEME_TER;
+    input.ter_category = PPH21_TER_CATEGORY_A;
+
+    /* Calculate */
+    result = pph21_calculate(&input);
+
+    /* Use result->total_tax and result->breakdown */
+    printf("Total tax: %lld\n", result->total_tax.value);
+
+    /* Clean up */
+    pph_result_free(result);
+    return 0;
+}
+```
+
+### Using the CLI
+
+```bash
+pphc pph21
+```
+
+## Platform Support
+
+| Platform | Compiler | Status |
+|----------|----------|--------|
+| Linux | GCC, Clang | ✅ Tested |
+| macOS | Clang | ✅ Tested |
+| iOS | Clang | ✅ Framework |
+| Windows | MSVC 2019+ | ✅ Tested |
+| Windows | OpenWatcom 1.9+ | ✅ Tested |
+| Windows | MinGW | ✅ Tested |
+| DOS | OpenWatcom 1.9 | ✅ 16/32-bit |
+
+## Build Outputs
+
+- **Unix/Linux**: `libpph.so`, `libpph.a`, `pphc`
+- **macOS**: `pph.framework`, `libpph.dylib`, `libpph.a`, `pphc`
+- **iOS**: `pph.framework` (device/simulator), `pph.xcframework`
+- **Windows (MSVC)**: `pph.dll` (v0.1a), `pph.lib`, `pph_static.lib`, `pphc.exe`
+- **Windows (OpenWatcom)**: `pph.dll` (v0.1a), `pph.lib`, `pph_s.lib`, `pphc.exe`
+- **Windows (MinGW)**: `libpph.dll`, `libpph.dll.a`, `libpph.a`, `pphc.exe`
+
+## Documentation
+
+- [BUILDING.md](BUILDING.md) - Detailed platform-specific build instructions
+- [API Reference](docs/API.md) - Complete API documentation (TODO)
+- [Examples](examples/) - Usage examples
+
+## Technical Details
+
+- **Precision**: 4 decimal places (scale factor 10,000)
+- **Integer type**: `__int64` (OpenWatcom/MSVC) or `int64_t` (GCC/Clang)
+- **C Standard**: C99 with compiler-specific extensions for 64-bit integers
+- **Memory management**: Heap allocation, caller-free pattern
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Contributing
+
+Contributions are welcome! This is an early release (v0.1a) and the library is still being developed.
+
+## Support
+
+For issues and questions: https://github.com/openpajak/pphc/issues
+
+## Acknowledgments
+
+Part of the OpenPajak project - open-source Indonesian tax calculators.

@@ -1,0 +1,77 @@
+# Build directories
+build/
+out/
+cmake-build-*/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+!cmake/*.cmake
+
+# Compiled Object files
+*.o
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+/pphc
+/build/test_*
+/build/example_*
+/build/compare_*
+
+# macOS/iOS
+.DS_Store
+*.framework
+*.xcframework
+*.dSYM/
+*.dSYM.zip
+
+# Windows
+*.pdb
+*.ilk
+*.exp
+*.res
+*.rc.stamp
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.ccls-cache/
+
+# Debug files
+*.i*86
+*.x86_64
+*.hex
+*.map
+
+# Core dumps
+core
+vgcore.*
+
+# Dependency files
+*.d
+*.dep
