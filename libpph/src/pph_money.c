@@ -321,3 +321,67 @@ pph_money_t pph_money_from_string(const char *str) {
 
     return result;
 }
+
+pph_money_t pph_money_from_string_id(const char *str) {
+    pph_money_t result = PPH_ZERO;
+    pph_int64_t whole = 0, frac = 0;
+    int negative = 0;
+    const char *p = str;
+
+    if (str == NULL) {
+        return result;
+    }
+
+    /* Skip whitespace */
+    while (*p == ' ' || *p == '\t') {
+        p++;
+    }
+
+    /* Check sign */
+    if (*p == '-') {
+        negative = 1;
+        p++;
+    } else if (*p == '+') {
+        p++;
+    }
+
+    /* Parse whole part, skip thousands separators (dots) */
+    while (*p != '\0') {
+        if (*p >= '0' && *p <= '9') {
+            whole = whole * 10 + (*p - '0');
+            p++;
+        } else if (*p == '.') {
+            /* Skip thousands separator */
+            p++;
+        } else if (*p == ',') {
+            /* Reached decimal separator */
+            break;
+        } else {
+            /* Invalid character */
+            return PPH_ZERO;
+        }
+    }
+
+    /* Parse decimal part (after comma) */
+    if (*p == ',') {
+        int count = 0;
+        p++;
+        while (*p >= '0' && *p <= '9' && count < 4) {
+            frac = frac * 10 + (*p - '0');
+            p++;
+            count++;
+        }
+        /* Pad with zeros if needed */
+        while (count < 4) {
+            frac *= 10;
+            count++;
+        }
+    }
+
+    result.value = whole * PPH_SCALE_FACTOR + frac;
+    if (negative) {
+        result.value = -result.value;
+    }
+
+    return result;
+}

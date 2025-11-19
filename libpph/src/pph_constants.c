@@ -9,7 +9,7 @@
    PTKP Table (Penghasilan Tidak Kena Pajak)
    ============================================ */
 
-const pph_money_t PPH_PTKP_TABLE[8] = {
+static const pph_money_t PPH_PTKP_TABLE[8] = {
     PPH_RUPIAH(54000000),  /* TK/0 */
     PPH_RUPIAH(58500000),  /* TK/1 */
     PPH_RUPIAH(63000000),  /* TK/2 */
@@ -38,7 +38,7 @@ typedef struct {
 
 #define PASAL17_LAYER_COUNT 5
 
-const pasal17_layer_t PPH_PASAL17_LAYERS[PASAL17_LAYER_COUNT] = {
+static const pasal17_layer_t PPH_PASAL17_LAYERS[PASAL17_LAYER_COUNT] = {
     { PPH_RUPIAH(60000000),    PPH_MONEY(0, 500) },   /* 5% = 0.0500 */
     { PPH_RUPIAH(190000000),   PPH_MONEY(0, 1500) },  /* 15% = 0.1500 */
     { PPH_RUPIAH(250000000),   PPH_MONEY(0, 2500) },  /* 25% = 0.2500 */
@@ -78,10 +78,10 @@ typedef struct {
 } ter_entry_t;
 
 #define TER_BULANAN_A_COUNT 44
-#define TER_BULANAN_B_COUNT 39
-#define TER_BULANAN_C_COUNT 39
+#define TER_BULANAN_B_COUNT 40
+#define TER_BULANAN_C_COUNT 41
 
-const ter_entry_t TER_BULANAN_A[TER_BULANAN_A_COUNT] = {
+static const ter_entry_t TER_BULANAN_A[TER_BULANAN_A_COUNT] = {
     { PPH_RUPIAH(5400000), PPH_MONEY(0, 0) },
     { PPH_RUPIAH(5650000), PPH_MONEY(0, 25) },
     { PPH_RUPIAH(5950000), PPH_MONEY(0, 50) },
@@ -128,7 +128,7 @@ const ter_entry_t TER_BULANAN_A[TER_BULANAN_A_COUNT] = {
     { PPH_RUPIAH(2147483647), PPH_MONEY(0, 3400) }  /* Infinity */
 };
 
-const ter_entry_t TER_BULANAN_B[TER_BULANAN_B_COUNT] = {
+static const ter_entry_t TER_BULANAN_B[TER_BULANAN_B_COUNT] = {
     { PPH_RUPIAH(6200000), PPH_MONEY(0, 0) },
     { PPH_RUPIAH(6500000), PPH_MONEY(0, 25) },
     { PPH_RUPIAH(6850000), PPH_MONEY(0, 50) },
@@ -171,7 +171,7 @@ const ter_entry_t TER_BULANAN_B[TER_BULANAN_B_COUNT] = {
     { PPH_RUPIAH(2147483647), PPH_MONEY(0, 3400) }
 };
 
-const ter_entry_t TER_BULANAN_C[TER_BULANAN_C_COUNT] = {
+static const ter_entry_t TER_BULANAN_C[TER_BULANAN_C_COUNT] = {
     { PPH_RUPIAH(6600000), PPH_MONEY(0, 0) },
     { PPH_RUPIAH(6950000), PPH_MONEY(0, 25) },
     { PPH_RUPIAH(7350000), PPH_MONEY(0, 50) },
@@ -253,19 +253,19 @@ pph_money_t pph_get_ter_bulanan_rate(pph21_ter_category_t category, pph_money_t 
 
 #define TER_HARIAN_COUNT 3
 
-const ter_entry_t TER_HARIAN_A[TER_HARIAN_COUNT] = {
+static const ter_entry_t TER_HARIAN_A[TER_HARIAN_COUNT] = {
     { PPH_RUPIAH(750000), PPH_MONEY(0, 25) },
     { PPH_RUPIAH(2500000), PPH_MONEY(0, 150) },
     { PPH_RUPIAH(2147483647), PPH_MONEY(0, 200) }
 };
 
-const ter_entry_t TER_HARIAN_B[TER_HARIAN_COUNT] = {
+static const ter_entry_t TER_HARIAN_B[TER_HARIAN_COUNT] = {
     { PPH_RUPIAH(750000), PPH_MONEY(0, 25) },
     { PPH_RUPIAH(2500000), PPH_MONEY(0, 125) },
     { PPH_RUPIAH(2147483647), PPH_MONEY(0, 175) }
 };
 
-const ter_entry_t TER_HARIAN_C[TER_HARIAN_COUNT] = {
+static const ter_entry_t TER_HARIAN_C[TER_HARIAN_COUNT] = {
     { PPH_RUPIAH(750000), PPH_MONEY(0, 25) },
     { PPH_RUPIAH(2500000), PPH_MONEY(0, 100) },
     { PPH_RUPIAH(2147483647), PPH_MONEY(0, 150) }

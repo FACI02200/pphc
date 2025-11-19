@@ -63,6 +63,7 @@ PPH_EXPORT char* pph_money_to_string(pph_money_t money, char *buffer, pph_size_t
 PPH_EXPORT char* pph_money_to_string_formatted(pph_money_t money, char *buffer, pph_size_t size);
 PPH_EXPORT char* pph_percent_to_string(pph_money_t percent, char *buffer, pph_size_t size);
 PPH_EXPORT pph_money_t pph_money_from_string(const char *str);
+PPH_EXPORT pph_money_t pph_money_from_string_id(const char *str); /* Indonesian format: comma=decimal, dot=thousands */
 
 /* ============================================
    Tax Breakdown Types
