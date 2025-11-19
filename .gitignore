@@ -1,6 +1,7 @@
 # Build directories
 build/
 build-wasm/
+build-android/
 out/
 cmake-build-*/
 
@@ -85,3 +86,14 @@ vgcore.*
 *.data
 *.js.mem
 node_modules/
+
+# Android
+*.apk
+*.ap_
+*.dex
+*.class
+local.properties
+.gradle/
+captures/
+.externalNativeBuild/
+.cxx/

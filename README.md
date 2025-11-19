@@ -11,11 +11,12 @@ A portable C library for calculating Indonesian taxes (PPh 21/22/23/26, PPh Fina
 - **Fixed-point arithmetic**: 4 decimal places (10,000 scale factor) for accurate financial calculations
 - **Calculation transparency**: Full breakdown of every calculation step with month-by-month TER withholding
 - **Multi-bonus support**: Flexible bonus system (THR, performance bonuses, etc.) with accurate TER calculation per month
-- **Extreme portability**: Runs on DOS (OpenWatcom), Windows (MSVC/MinGW), Linux, macOS, iOS, and WebAssembly
+- **Extreme portability**: Runs on DOS (OpenWatcom), Windows (MSVC/MinGW), Linux, macOS, iOS, Android, and WebAssembly
 - **Zero dependencies**: Pure ANSI C with no external libraries
 - **Thread-safe**: No global state
 - **Framework support**: macOS/iOS frameworks with XCFramework support
 - **WebAssembly**: Run in web browsers with JavaScript/TypeScript bindings
+- **Android NDK**: Full JNI bindings with Java/Kotlin support
 
 ## Quick Start
 
@@ -94,6 +95,56 @@ const total = pph.moneyAdd(salary, bonus);
 
 See [wasm/README.md](wasm/README.md) for detailed WASM documentation.
 
+### Android / NDK
+
+```bash
+# Set Android NDK path
+export ANDROID_NDK=/path/to/android-ndk
+
+# Build for all ABIs
+./build-android.sh Release
+```
+
+Java usage:
+```java
+import com.openpajak.pph.*;
+
+// Initialize
+PPHCalculator.initialize();
+
+// Create input
+PPHMoney salary = PPHMoney.fromRupiah(10_000_000);
+PPH21Calculator.PPH21Input input = new PPH21Calculator.PPH21Input(salary)
+    .withMonthsPaid(12)
+    .withPTKPStatus(PPHCalculator.PTKPStatus.TK0)
+    .withScheme(PPH21Calculator.Scheme.TER)
+    .withTERCategory(PPHCalculator.TERCategory.B);
+
+// Calculate
+try (PPH21Calculator.PPH21Result result = PPH21Calculator.calculate(input)) {
+    PPHMoney totalTax = result.getTotalTax();
+    Log.i("Tax", "Total: " + totalTax);
+}
+```
+
+Kotlin DSL:
+```kotlin
+import com.openpajak.pph.*
+
+val result = pph21Input(10_000_000.idr) {
+    monthsPaid(12)
+    ptkpStatus(PPHCalculator.PTKPStatus.TK0)
+    scheme(PPH21Calculator.Scheme.TER)
+    terCategory(PPHCalculator.TERCategory.B)
+}.calculate()
+
+result.use {
+    println("Total tax: ${it.totalTax}")
+}
+```
+
+See [android/README.md](android/README.md) for detailed Android documentation.
+
 ## Platform Support
 
 | Platform | Compiler | Status |
@@ -101,6 +152,7 @@ See [wasm/README.md](wasm/README.md) for detailed WASM documentation.
 | Linux | GCC, Clang | ✅ Tested |
 | macOS | Clang | ✅ Tested |
 | iOS | Clang | ✅ Framework |
+| Android | NDK (Clang) | ✅ JNI/Java/Kotlin |
 | Windows | MSVC 2019+ | ✅ Tested |
 | Windows | OpenWatcom 1.9+ | ✅ Tested |
 | Windows | MinGW | ✅ Tested |
@@ -112,6 +164,7 @@ See [wasm/README.md](wasm/README.md) for detailed WASM documentation.
 - **Unix/Linux**: `libpph.so`, `libpph.a`, `pphc`
 - **macOS**: `pph.framework`, `libpph.dylib`, `libpph.a`, `pphc`
 - **iOS**: `pph.framework` (device/simulator), `pph.xcframework`
+- **Android**: `libpph.so` (arm64-v8a, armeabi-v7a, x86, x86_64), `libpph.a`
 - **Windows (MSVC)**: `pph.dll` (v0.1a), `pph.lib`, `pph_static.lib`, `pphc.exe`
 - **Windows (OpenWatcom)**: `pph.dll` (v0.1a), `pph.lib`, `pph_s.lib`, `pphc.exe`
 - **Windows (MinGW)**: `libpph.dll`, `libpph.dll.a`, `libpph.a`, `pphc.exe`

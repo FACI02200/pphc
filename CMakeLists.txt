@@ -16,6 +16,11 @@ option(BUILD_TESTS "Build test suite" ON)
 option(BUILD_EXAMPLES "Build example programs" ON)
 option(BUILD_CLI "Build command-line tool" ON)
 
+# Android configuration (must be before other includes)
+if(ANDROID)
+    include(cmake/AndroidConfig.cmake)
+endif()
+
 # Emscripten configuration (must be before other includes)
 if(EMSCRIPTEN)
     include(cmake/EmscriptenConfig.cmake)
@@ -23,14 +28,16 @@ endif()
 
 # Include CMake modules
 include(cmake/CompilerDetection.cmake)
-include(cmake/PlatformConfig.cmake)
-if(APPLE AND NOT EMSCRIPTEN)
+if(NOT ANDROID)
+    include(cmake/PlatformConfig.cmake)
+endif()
+if(APPLE AND NOT EMSCRIPTEN AND NOT ANDROID)
     include(cmake/AppleFramework.cmake)
 endif()
 
 # Compiler detection and configuration
 detect_compiler()
-if(NOT EMSCRIPTEN)
+if(NOT EMSCRIPTEN AND NOT ANDROID)
     configure_platform()
 endif()
 

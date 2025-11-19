@@ -11,6 +11,13 @@ set(LIBPPH_SOURCES
     src/ppnbm.c
 )
 
+# Add JNI wrapper for Android
+if(ANDROID)
+    list(APPEND LIBPPH_SOURCES
+        ../android/jni/pph_jni.c
+    )
+endif()
+
 set(LIBPPH_HEADERS
     include/pph/pph_calculator.h
     include/pph/pph_types.h
