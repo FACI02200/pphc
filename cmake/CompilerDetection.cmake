@@ -30,7 +30,7 @@ function(detect_compiler)
         message(STATUS "Detected GCC compiler")
 
         # GCC-specific flags
-        add_compile_options(-Wall -Wextra -Wpedantic)
+        add_compile_options(-Wall -Wextra -Wpedantic -pedantic)
 
         if(MINGW)
             message(STATUS "Building with MinGW")
@@ -41,6 +41,6 @@ function(detect_compiler)
         message(STATUS "Detected Clang compiler")
 
         # Clang-specific flags
-        add_compile_options(-Wall -Wextra -Wpedantic)
+        add_compile_options(-Wall -Wextra -Wpedantic -pedantic)
     endif()
 endfunction()

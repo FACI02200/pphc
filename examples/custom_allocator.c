@@ -115,7 +115,7 @@ void pool_free(void* ptr) {
 
 void pool_reset(void) {
     pool_offset = 0;
-    printf("Memory pool reset (freed %zu KB)\n", POOL_SIZE / 1024);
+    printf("Memory pool reset (freed %zu KB)\n", (size_t)(POOL_SIZE / 1024));
 }
 
 /* ============================================
@@ -125,7 +125,6 @@ void pool_reset(void) {
 int main(void) {
     pph21_input_t input = {0};
     pph_result_t *result;
-    pph_size_t i;
 
     printf("=== PPHC Custom Allocator Examples ===\n\n");
 
