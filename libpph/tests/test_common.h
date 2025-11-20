@@ -14,13 +14,16 @@ extern int g_test_total;
 extern int g_test_passed;
 extern int g_test_failed;
 
+/* Include types for portable printf macros */
+#include <pph/pph_types.h>
+
 /* Test macros */
 #define ASSERT_EQ(expected, actual) \
     do { \
         if ((expected) != (actual)) { \
-            fprintf(stderr, "FAIL: %s:%d: Expected %lld, got %lld\n", \
+            fprintf(stderr, "FAIL: %s:%d: Expected %" PPH_PRId64 ", got %" PPH_PRId64 "\n", \
                     __FILE__, __LINE__, \
-                    (long long)(expected), (long long)(actual)); \
+                    (pph_int64_t)(expected), (pph_int64_t)(actual)); \
             return 1; \
         } \
     } while(0)
