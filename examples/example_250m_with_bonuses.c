@@ -21,21 +21,21 @@ int main(void) {
     pph21_bonus_t bonuses[2];
 
     bonuses[0].month = 3;
-    bonuses[0].amount.value = PPH_INT64_C(2500000000000);  /* 250,000,000 */
+    bonuses[0].amount = PPH_RUPIAH(250000000);
     strcpy(bonuses[0].name, "THR");
 
     bonuses[1].month = 4;
-    bonuses[1].amount.value = PPH_INT64_C(1000000000000);  /* 100,000,000 */
+    bonuses[1].amount = PPH_RUPIAH(100000000);
     strcpy(bonuses[1].name, "Bonus Tahunan");
 
     pph_init();
 
     /* Configure calculation */
     input.subject_type = PPH21_PEGAWAI_TETAP;
-    input.bruto_monthly.value = PPH_INT64_C(2500000000000);  /* 250,000,000 */
+    input.bruto_monthly = PPH_RUPIAH(250000000);
     input.months_paid = 12;
-    input.pension_contribution.value = PPH_INT64_C(1000000000);  /* 100,000 */
-    input.zakat_or_donation.value = 0;
+    input.pension_contribution = PPH_RUPIAH(100000);
+    input.zakat_or_donation = PPH_ZERO;
     input.ptkp_status = PPH_PTKP_K2;                 /* Married with 2 dependents */
     input.scheme = PPH21_SCHEME_TER;                 /* Use TER scheme */
     input.ter_category = PPH21_TER_CATEGORY_B;       /* With NPWP */

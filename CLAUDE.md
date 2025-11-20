@@ -135,7 +135,19 @@ libpph\tests\Release\test_pph21.exe
 
 ### Key Design Patterns
 
-**Fixed-Point Arithmetic**: All monetary values use `pph_money_t` with 4 decimal places (scale factor 10,000). Use `PPH_RUPIAH(amount)` macro to create money values, never manipulate `.value` directly.
+**Fixed-Point Arithmetic**: All monetary values use `pph_money_t` with 4 decimal places (scale factor 10,000). The library provides dual-mode macros for creating money values:
+
+**Runtime Macros** (use in code):
+- `PPH_RUPIAH(whole)` - Create money value from rupiah amount (e.g., `PPH_RUPIAH(10000000)` for 10 million)
+- `PPH_MONEY(whole, frac4)` - Create money value with fractional part
+- `PPH_ZERO` - Zero money value
+
+**Static Initializer Macros** (use in const/static arrays):
+- `PPH_RUPIAH_STATIC(whole)` - For static array initialization
+- `PPH_MONEY_STATIC(whole, frac4)` - For static array initialization with fractions
+- `PPH_ZERO_STATIC` - Zero value for static arrays
+
+On modern compilers (GCC, Clang, MSVC), runtime macros use C99 compound literals. On OpenWatcom (DOS), they expand to inline functions. Never manipulate `.value` directly.
 
 **Memory Management**:
 - Caller-free pattern: All `*_calculate()` functions return allocated `pph_result_t*` that must be freed with `pph_result_free()`
@@ -182,25 +194,34 @@ libpph\tests\Release\test_pph21.exe
 - **Windows MinGW**: `libpph.dll`, `libpph.dll.a`, `libpph.a`, `pphc.exe`
 - **WebAssembly**: `pph.js`, `pph.wasm`
 
-## DOS Compatibility Notes
+## DOS Compatibility with Dual-Mode Macros
 
-The codebase has been made compatible with DOS builds using OpenWatcom. The following changes were made to avoid C99 compound literals:
+The codebase is fully compatible with DOS builds using OpenWatcom through a dual-mode macro system that automatically adapts to compiler capabilities:
 
-1. **Static Array Initializers**: All `PPH_RUPIAH()` and `PPH_MONEY()` macros in static arrays have been replaced with explicit `{ PPH_INT64_C(value) }` initializers.
+**How It Works**:
+- **Runtime macros** (`PPH_RUPIAH`, `PPH_MONEY`, `PPH_ZERO`) use compound literals on modern compilers, inline functions on OpenWatcom
+- **Static macros** (`PPH_RUPIAH_STATIC`, `PPH_MONEY_STATIC`, `PPH_ZERO_STATIC`) use compile-time constant expressions that work everywhere
+- Conditional compilation (`#if defined(__WATCOMC__)`) handles the differences transparently
 
-2. **Runtime Code**: Compound literals in runtime code (function arguments, assignments, return statements) have been replaced with local variables:
-   ```c
-   // Instead of: pph_money_min(x, PPH_RUPIAH(6000000))
-   pph_money_t limit;
-   limit.value = PPH_INT64_C(60000000000);
-   pph_money_min(x, limit);
-   ```
+**Usage Examples**:
+```c
+/* Static array initialization (use _STATIC versions) */
+static const pph_money_t PTKP_TABLE[] = {
+    PPH_RUPIAH_STATIC(54000000),  /* TK/0 */
+    PPH_RUPIAH_STATIC(58500000),  /* TK/1 */
+};
 
-3. **DOS Build Limitations**:
-   - Only static library builds are supported (no DLL)
-   - CLI tool and examples are fully functional
-   - Tests require additional porting work
-   - Use `-DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF`
+/* Runtime code (use regular versions) */
+input.bruto_monthly = PPH_RUPIAH(10000000);
+input.pension_contribution = PPH_RUPIAH(100000);
+pph_money_t limit = pph_money_min(x, PPH_RUPIAH(6000000));
+```
+
+**DOS Build Limitations**:
+- Only static library builds supported (no DLL support on DOS)
+- CLI tool and examples fully functional (28KB-58KB executables)
+- Tests require additional porting work
+- Use `-DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF` when building for DOS
 
 ## Important Notes for Development
 
@@ -210,15 +231,17 @@ The codebase has been made compatible with DOS builds using OpenWatcom. The foll
 
 3. **Fixed-Point Math**: Always use `pph_money_*` functions for arithmetic. Direct manipulation of `.value` field leads to scale factor errors.
 
-4. **Portability**: Test changes across compilers if modifying core code. The library supports ancient compilers (OpenWatcom 1.9 for DOS) to modern ones.
+4. **Dual-Mode Macros**: Use `PPH_RUPIAH_STATIC()` / `PPH_MONEY_STATIC()` / `PPH_ZERO_STATIC` for static/const array initializers. Use `PPH_RUPIAH()` / `PPH_MONEY()` / `PPH_ZERO` for runtime code. This ensures DOS compatibility while providing clean syntax on all platforms.
 
-5. **Error Handling**: Use `pph_set_last_error()` for error messages, return NULL from calculation functions on failure.
+5. **Portability**: Test changes across compilers if modifying core code. The library supports ancient compilers (OpenWatcom 1.9 for DOS) to modern ones.
 
-6. **Breakdown Building**: For tax calculations, build breakdowns progressively using `pph_result_add_section/currency/percent/subtotal/total` functions.
+6. **Error Handling**: Use `pph_set_last_error()` for error messages, return NULL from calculation functions on failure.
 
-7. **Integer Literals**: Use `PPH_INT64_C()` macro for 64-bit literals to ensure portability (e.g., `PPH_INT64_C(10000)` not `10000LL`).
+7. **Breakdown Building**: For tax calculations, build breakdowns progressively using `pph_result_add_section/currency/percent/subtotal/total` functions.
 
-8. **Tax Regulations**: This library implements 2024 Indonesian tax regulations. Changes to tax law require updates to `pph_constants.c`.
+8. **Integer Literals**: Use `PPH_INT64_C()` macro for 64-bit literals to ensure portability (e.g., `PPH_INT64_C(10000)` not `10000LL`).
+
+9. **Tax Regulations**: This library implements 2024 Indonesian tax regulations. Changes to tax law require updates to `pph_constants.c`.
 
 ## Testing Considerations
 

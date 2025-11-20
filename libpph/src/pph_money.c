@@ -141,7 +141,7 @@ pph_money_t pph_money_round_down_thousand(pph_money_t value) {
     pph_int64_t thousands;
 
     if (value.value < 0) {
-        result.value = 0;
+        return PPH_ZERO;
     } else {
         /* Divide by 1000 (in internal units: 1000 * 10000 = 10000000) */
         thousands = value.value / PPH_INT64_C(10000000);
@@ -275,7 +275,7 @@ pph_money_t pph_money_from_string(const char *str) {
     int negative = 0;
     const char *p = str;
 
-    result.value = 0;
+    result = PPH_ZERO;
 
     if (str == NULL) {
         return result;
@@ -330,7 +330,7 @@ pph_money_t pph_money_from_string_id(const char *str) {
     int negative = 0;
     const char *p = str;
 
-    result.value = 0;
+    result = PPH_ZERO;
 
     if (str == NULL) {
         return result;
@@ -362,9 +362,7 @@ pph_money_t pph_money_from_string_id(const char *str) {
             break;
         } else {
             /* Invalid character */
-            pph_money_t zero;
-            zero.value = 0;
-            return zero;
+            return PPH_ZERO;
         }
     }
 

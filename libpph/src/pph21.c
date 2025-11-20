@@ -48,12 +48,8 @@ static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
     iuran_tahun = pph_money_mul_int(input->pension_contribution, months);
 
     /* Biaya jabatan: min(5% * bruto, 6 juta) */
-    {
-        pph_money_t six_million;
-        six_million.value = PPH_INT64_C(60000000000);
-        biaya_jabatan = pph_money_percent(bruto_tahun, 5, 100);
-        biaya_jabatan = pph_money_min(biaya_jabatan, six_million);
-    }
+    biaya_jabatan = pph_money_percent(bruto_tahun, 5, 100);
+    biaya_jabatan = pph_money_min(biaya_jabatan, PPH_RUPIAH(6000000));
 
     netto_setahun = pph_money_sub(
         pph_money_sub(
@@ -73,12 +69,8 @@ static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
         int i, m;
 
         /* Initialize monthly income with base salary */
-        {
-            pph_money_t zero;
-            zero.value = 0;
-            for (i = 0; i < 12; i++) {
-                monthly_income[i] = (i < months) ? input->bruto_monthly : zero;
-            }
+        for (i = 0; i < 12; i++) {
+            monthly_income[i] = (i < months) ? input->bruto_monthly : PPH_ZERO;
         }
 
         /* Add bonuses to appropriate months */
@@ -92,7 +84,7 @@ static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
         }
 
         /* Calculate TER for each month (months 1-11 only) */
-        ter_paid.value = 0;
+        ter_paid = PPH_ZERO;
         for (i = 0; i < 11 && i < months; i++) {
             pph_money_t ter_rate, month_tax;
             ter_rate = pph_get_ter_bulanan_rate(input->ter_category, monthly_income[i]);
@@ -113,9 +105,7 @@ static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
         /* Group months by income for cleaner display */
         {
             int regular_count = 0;
-            pph_money_t regular_total;
-
-            regular_total.value = 0;
+            pph_money_t regular_total = PPH_ZERO;
 
             for (i = 0; i < 11 && i < months; i++) {
                 /* Check if this month has bonus */
@@ -240,14 +230,10 @@ static pph_result_t* calculate_simple(const pph21_input_t *input, const char *su
     /* Simple 5% flat rate for demonstration */
     tax = pph_money_percent(input->bruto_monthly, 5, 100);
 
-    {
-        pph_money_t rate_5_percent;
-        rate_5_percent.value = PPH_INT64_C(500);  /* 5% = 0.0500 */
-        pph_result_add_section(result, subject_name);
-        pph_result_add_currency(result, "Penghasilan bruto", input->bruto_monthly, NULL);
-        pph_result_add_percent(result, "Tarif", rate_5_percent, "5%");
-        pph_result_add_total(result, "PPh 21", tax);
-    }
+    pph_result_add_section(result, subject_name);
+    pph_result_add_currency(result, "Penghasilan bruto", input->bruto_monthly, NULL);
+    pph_result_add_percent(result, "Tarif", PPH_MONEY(0, 500), "5%");
+    pph_result_add_total(result, "PPh 21", tax);
 
     result->total_tax = tax;
     return result;

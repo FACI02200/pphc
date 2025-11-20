@@ -86,7 +86,7 @@ pph_result_t* pph_result_create(void) {
         return NULL;
     }
 
-    result->total_tax.value = 0;
+    result->total_tax = PPH_ZERO;
     result->breakdown_count = 0;
     result->breakdown_capacity = INITIAL_BREAKDOWN_CAPACITY;
 
@@ -180,9 +180,7 @@ int pph_result_add_row(pph_result_t *result,
 }
 
 int pph_result_add_section(pph_result_t *result, const char *label) {
-    pph_money_t zero;
-    zero.value = 0;
-    return pph_result_add_row(result, label, zero, PPH_VALUE_TEXT, NULL, PPH_BREAKDOWN_SECTION);
+    return pph_result_add_row(result, label, PPH_ZERO, PPH_VALUE_TEXT, NULL, PPH_BREAKDOWN_SECTION);
 }
 
 int pph_result_add_currency(pph_result_t *result, const char *label, pph_money_t value, const char *note) {
@@ -202,9 +200,7 @@ int pph_result_add_total(pph_result_t *result, const char *label, pph_money_t va
 }
 
 int pph_result_add_spacer(pph_result_t *result) {
-    pph_money_t zero;
-    zero.value = 0;
-    return pph_result_add_row(result, "", zero, PPH_VALUE_TEXT, NULL, PPH_BREAKDOWN_SPACER);
+    return pph_result_add_row(result, "", PPH_ZERO, PPH_VALUE_TEXT, NULL, PPH_BREAKDOWN_SPACER);
 }
 
 /* ============================================

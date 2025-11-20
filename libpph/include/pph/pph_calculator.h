@@ -33,14 +33,65 @@ typedef struct {
     pph_int64_t value;  /* Value * 10000 (4 decimal places) */
 } pph_money_t;
 
-/* Money constructors */
-#define PPH_MONEY(whole, frac4) \
-    ((pph_money_t){((pph_int64_t)(whole) * PPH_SCALE_FACTOR) + (pph_int64_t)(frac4)})
+/* ============================================
+   Money Constructors
 
-#define PPH_RUPIAH(whole) \
-    ((pph_money_t){(pph_int64_t)(whole) * PPH_SCALE_FACTOR})
+   Two versions for different contexts:
 
-#define PPH_ZERO ((pph_money_t){0})
+   1. Static initializers (use in const/static arrays):
+      PPH_MONEY_STATIC(whole, frac4)
+      PPH_RUPIAH_STATIC(whole)
+      PPH_ZERO_STATIC
+
+   2. Runtime (use in code):
+      PPH_MONEY(whole, frac4)
+      PPH_RUPIAH(whole)
+      PPH_ZERO
+   ============================================ */
+
+/* Static initializer versions - work in all compilers */
+#define PPH_MONEY_STATIC(whole, frac4) \
+    { ((pph_int64_t)(whole) * 10000 + (pph_int64_t)(frac4)) }
+
+#define PPH_RUPIAH_STATIC(whole) \
+    { ((pph_int64_t)(whole) * 10000) }
+
+#define PPH_ZERO_STATIC { 0 }
+
+/* Runtime versions - compiler-dependent */
+#if defined(__WATCOMC__)
+    /* OpenWatcom: No compound literals, use static inline functions */
+    static PPH_INLINE pph_money_t pph_money_make(pph_int64_t whole, pph_int64_t frac4) {
+        pph_money_t result;
+        result.value = whole * PPH_INT64_C(10000) + frac4;
+        return result;
+    }
+
+    static PPH_INLINE pph_money_t pph_rupiah_make(pph_int64_t whole) {
+        pph_money_t result;
+        result.value = whole * PPH_INT64_C(10000);
+        return result;
+    }
+
+    static PPH_INLINE pph_money_t pph_zero_make(void) {
+        pph_money_t result;
+        result.value = 0;
+        return result;
+    }
+
+    #define PPH_MONEY(whole, frac4)  pph_money_make((whole), (frac4))
+    #define PPH_RUPIAH(whole)        pph_rupiah_make(whole)
+    #define PPH_ZERO                 pph_zero_make()
+#else
+    /* Modern compilers: Use C99 compound literals */
+    #define PPH_MONEY(whole, frac4) \
+        ((pph_money_t){((pph_int64_t)(whole) * PPH_SCALE_FACTOR) + (pph_int64_t)(frac4)})
+
+    #define PPH_RUPIAH(whole) \
+        ((pph_money_t){(pph_int64_t)(whole) * PPH_SCALE_FACTOR})
+
+    #define PPH_ZERO ((pph_money_t){0})
+#endif
 
 /* Money arithmetic operations */
 PPH_EXPORT pph_money_t pph_money_add(pph_money_t a, pph_money_t b);
