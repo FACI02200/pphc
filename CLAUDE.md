@@ -46,20 +46,22 @@ set WATCOM=C:\WATCOM
 set PATH=%WATCOM%\binnt;%WATCOM%\binw;%PATH%
 
 mkdir build-dos && cd build-dos
-cmake -G "Watcom WMake" -DCMAKE_SYSTEM_NAME=DOS -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF ..
+cmake -G "Watcom WMake" -DCMAKE_SYSTEM_NAME=DOS -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF ..
 wmake
 ```
 
 **Output:**
 - `libpph/pph.lib` - 28KB static library
-- `cli/pphc.exe` - 33KB DOS executable (32-bit protected mode, LE format)
+- `cli/pphc.exe` - 33KB DOS executable
+- `examples/example_250m_with_bonuses.exe` - 32KB
+- `examples/custom_allocator.exe` - 58KB
 
 **Note:** DOS builds require:
 - CMake 3.18+ (for DOS cross-compile support)
 - OpenWatcom 2.0+
 - Static library only (no DLL support on DOS)
-- Tests and examples are not built for DOS (they use C99 features more extensively)
-- The CLI tool (`pphc.exe`) is fully functional on DOS!
+- All executables are 32-bit protected mode (LE format for DOS/4GW)
+- Tests are not built for DOS (require additional porting work)
 
 ### WebAssembly
 ```bash
@@ -196,9 +198,9 @@ The codebase has been made compatible with DOS builds using OpenWatcom. The foll
 
 3. **DOS Build Limitations**:
    - Only static library builds are supported (no DLL)
-   - CLI tool is fully functional
-   - Tests and examples require additional porting work
-   - Use `-DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF`
+   - CLI tool and examples are fully functional
+   - Tests require additional porting work
+   - Use `-DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=OFF`
 
 ## Important Notes for Development
 
