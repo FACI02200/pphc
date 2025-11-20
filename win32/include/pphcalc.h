@@ -90,40 +90,15 @@ void PrintResults(HWND hwnd);
 #define SAFE_DELETE_OBJECT(h) if(h) { DeleteObject(h); h = NULL; }
 
 /* Subject type dropdown items */
-static const char* SUBJECT_TYPE_NAMES[] = {
-    "Pegawai tetap",
-    "Pensiunan",
-    "Pegawai tidak tetap",
-    "Bukan pegawai",
-    "Peserta kegiatan",
-    "Program pensiun",
-    "Mantan pegawai",
-    "WPLN (PPh 26)"
-};
+extern const char* SUBJECT_TYPE_NAMES[];
 
 /* PTKP status dropdown items */
-static const char* PTKP_STATUS_NAMES[] = {
-    "TK/0",
-    "TK/1",
-    "TK/2",
-    "TK/3",
-    "K/0",
-    "K/1",
-    "K/2",
-    "K/3"
-};
+extern const char* PTKP_STATUS_NAMES[];
 
 /* Scheme dropdown items */
-static const char* SCHEME_NAMES[] = {
-    "Skema lama (Pasal 17)",
-    "TER (Tarif Efektif)"
-};
+extern const char* SCHEME_NAMES[];
 
 /* TER category dropdown items */
-static const char* TER_CATEGORY_NAMES[] = {
-    "Kategori A",
-    "Kategori B",
-    "Kategori C"
-};
+extern const char* TER_CATEGORY_NAMES[];
 
 #endif /* PPHCALC_H */

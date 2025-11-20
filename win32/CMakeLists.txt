@@ -38,6 +38,7 @@ set(PPHCALC_SOURCES
     src/formatting.c
     src/colors.c
     src/clipboard.c
+    src/pph_w32_const.c
 )
 
 # Header files (for IDE)

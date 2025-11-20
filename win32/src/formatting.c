@@ -80,11 +80,19 @@ pph_money_t ParseRupiah(const char* str)
  */
 void FormatThousandSeparator(const char* input, char* output, size_t outSize)
 {
-    int len = (int)strlen(input);
-    int outPos = 0;
-    int count = 0;
+    int len;
+    int outPos;
+    int count;
     int i;
-    int isNegative = 0;
+    int isNegative;
+
+    /* Suppress unused parameter warning for now - TODO: add bounds checking */
+    (void)outSize;
+
+    len = (int)strlen(input);
+    outPos = 0;
+    count = 0;
+    isNegative = 0;
 
     /* Check for negative */
     if (input[0] == '-') {
