@@ -1,10 +1,17 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.24)
+
+# Enable WATCOM_RUNTIME_LIBRARY property support (CMake 3.24+)
+if(POLICY CMP0136)
+    cmake_policy(SET CMP0136 NEW)
+endif()
+
 project(pphc VERSION 0.1.0 LANGUAGES C)
 
 # Set C standard (relaxed for GCC/Clang compatibility)
-set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD 90)
 set(CMAKE_C_STANDARD_REQUIRED OFF)
 set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_WATCOM_RUNTIME_LIBRARY "MultiThreaded")
 
 # Include custom CMake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")

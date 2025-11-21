@@ -2,7 +2,13 @@
 # Windows NT 4.0+ compatible GUI application
 # Links to PPHC static library
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.24)
+
+# Enable WATCOM_RUNTIME_LIBRARY property support
+if(POLICY CMP0136)
+    cmake_policy(SET CMP0136 NEW)
+endif()
+
 project(pphcalc_win32 C)
 
 # Set C standard
@@ -74,6 +80,11 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Watcom")
         /wx                     # Warnings as errors
         /ox                     # Maximum optimization
         /bt=nt                  # Windows NT target
+    )
+
+    # Static runtime linking (no DLL dependency)
+    set_property(TARGET pphcalc PROPERTY
+        WATCOM_RUNTIME_LIBRARY "MultiThreaded"
     )
 
 elseif(MINGW)

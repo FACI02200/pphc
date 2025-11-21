@@ -3,6 +3,10 @@ add_executable(pphc
     src/main.c
 )
 
+set_target_properties(pphc PROPERTIES 
+  WATCOM_RUNTIME_LIBRARY "MultiThreaded"
+)
+
 # Link against libpph
 if(BUILD_SHARED_LIBS)
     target_link_libraries(pphc PRIVATE pph_shared)

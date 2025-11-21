@@ -3,9 +3,20 @@ add_executable(example_250m_with_bonuses
     example_250m_with_bonuses.c
 )
 
+set_target_properties(
+    example_250m_with_bonuses PROPERTIES
+    WATCOM_RUNTIME_LIBRARY "MultiThreaded"
+)
+
 add_executable(custom_allocator
     custom_allocator.c
 )
+
+set_target_properties(
+    custom_allocator PROPERTIES
+    WATCOM_RUNTIME_LIBRARY "MultiThreaded"
+)
+
 
 # Link against libpph
 if(BUILD_SHARED_LIBS)

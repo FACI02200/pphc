@@ -47,6 +47,9 @@ if(BUILD_SHARED_LIBS)
                 OUTPUT_NAME "pph"
                 PREFIX ""
             )
+            set_target_properties(pph_shared PROPERTIES 
+                WATCOM_RUNTIME_LIBRARY "MultiThreaded"
+            )
         elseif(MINGW)
             set_target_properties(pph_shared PROPERTIES
                 OUTPUT_NAME "pph"
@@ -146,6 +149,11 @@ if(BUILD_STATIC_LIBS)
             set_target_properties(pph_static PROPERTIES
                 OUTPUT_NAME "pph_s"
             )
+
+            set_target_properties(pph_static PROPERTIES 
+                WATCOM_RUNTIME_LIBRARY "MultiThreaded"
+            )
+
         elseif(MINGW)
             set_target_properties(pph_static PROPERTIES
                 OUTPUT_NAME "pph"
